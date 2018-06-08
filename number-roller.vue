@@ -40,6 +40,11 @@ export default {
       default: 0
     }
   },
+  watch: {
+    num () {
+      this.count()
+    }
+  },
   data () {
     return {
       d: 0,
