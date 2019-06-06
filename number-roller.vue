@@ -8,7 +8,7 @@
 -->
 
 <template>
-  <span>{{ c }}</span>
+  <span ref="count">{{ c }}</span>
 </template>
 
 <script>
@@ -78,10 +78,30 @@ export default {
     clear () {
       clearInterval(this.ti)
       clearTimeout(this.to)
+    },
+    isInViewport (el) {
+      const viewportHeight =
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight
+      const elTop = el.getBoundingClientRect && el.getBoundingClientRect().top
+      return elTop < viewportHeight
+    },
+    triggerChange () {
+      const element = this.$refs.count
+      if (this.isInViewport(element)) {
+        this.to = setTimeout(this.count, this.delay)
+        document.removeEventListener('scroll', this.triggerChange, false)
+      }
     }
   },
   mounted () {
-    this.to = setTimeout(this.count, this.delay)
+    const element = this.$refs.count
+    if (this.isInViewport(element)) {
+      this.to = setTimeout(this.count, this.delay)
+    } else {
+      document.addEventListener('scroll', this.triggerChange, false)
+    }
   }
 }
 </script>
